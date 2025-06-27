@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - .env:/var/www/.env
+      - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - app-network
+    restart: always
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "8081:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - app-network
+    restart: always
+    
+networks:
+  app-network:
+    driver: bridge
