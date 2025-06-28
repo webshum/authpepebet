@@ -13,4 +13,7 @@ Route::group(['prefix' => 'auth'], function() {
 
     Route::get('vkontakte', [AuthController::class, 'redirect']);
     Route::get('vkontakte/callback', [AuthController::class, 'callback']);
+
+    Route::get('telegram', [AuthController::class, 'redirect']);
+    Route::get('telegram/callback', [AuthController::class, 'callback']);
 });

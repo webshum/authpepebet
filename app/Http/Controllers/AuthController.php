@@ -13,22 +13,24 @@ class AuthController extends Controller
         $handlerUrl = $request->input('handler_url');
         $provider = $request->input('provider');
 
-        $state = base64_encode(json_encode([
-            'handler_url' => $handlerUrl,
+        session([
+            'handlerUrl' => $handlerUrl,
             'provider' => $provider,
-        ]));
+        ]);
 
-        return Socialite::driver($provider)
-            ->with(['state' => $state])
-            ->redirect();
+        return Socialite::driver($provider)->redirect();
     }
 
-    public function callback(Request $request) {
-        $stateRaw = $request->input('state');
-        $state = json_decode(base64_decode($stateRaw), true);
-        $handlerUrl = $state['handler_url'];
-        $provider = $state['provider'];
+    public function callback() {
+        $handlerUrl = session('handlerUrl');
+        $provider = session('provider');
+        $now = time();
+        $expiresAt = $now + 600;
 
+        if (!$handlerUrl || !$provider) {
+            abort(400, 'Missing session data');
+        }
+       
         $user = Socialite::driver($provider)->stateless()->user();
 
         $data = [
@@ -37,9 +39,13 @@ class AuthController extends Controller
             'name' => $user->getName(),
             'avatar' => $user->getAvatar(),
             'provider' => $provider,
+            'iat' => $now,
+            'exp' => $expiresAt,
         ];
 
-        $jwt = JWT::encode($data, env('JWT_SECRET'), 'HS256');
+        $jwt = JWT::encode($data, config('jwt.secret'), 'HS256');
+
+        session()->forget(['handlerUrl', 'provider']);
 
         return redirect("{$handlerUrl}/{$provider}/callback?token={$jwt}");
     }
