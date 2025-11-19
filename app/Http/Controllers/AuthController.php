@@ -44,9 +44,9 @@ class AuthController extends Controller
         ];
 
         $jwt = JWT::encode($data, config('jwt.secret'), 'HS256');
-
+        
         session()->forget(['handlerUrl', 'provider']);
-
+        dd($jwt);
         return redirect("{$handlerUrl}/{$provider}/callback?token={$jwt}");
     }
 }
