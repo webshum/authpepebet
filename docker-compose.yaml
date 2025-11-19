@@ -25,21 +25,6 @@ services:
     networks:
       - app-network
     restart: always
-  
-  db:
-    image: mariadb
-    restart: always
-    ports:
-      - "3308:3306"
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - ./mysqlDb:/var/lib/mysql
-    networks:
-      - app-network
     
 networks:
   app-network:
