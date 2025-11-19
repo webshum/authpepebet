@@ -22,6 +22,7 @@ class AuthController extends Controller
     }
 
     public function callback() {
+        dd('hello');
         $handlerUrl = session('handlerUrl');
         $provider = session('provider');
         $now = time();
