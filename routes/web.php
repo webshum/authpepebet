@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TelegramBotAuthController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -7,7 +8,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['prefix' => 'auth'], function() {
+Route::group(['prefix' => 'auth'], function () {
     Route::get('google', [AuthController::class, 'redirect']);
     Route::get('google/callback', [AuthController::class, 'callback']);
 
@@ -17,3 +18,6 @@ Route::group(['prefix' => 'auth'], function() {
     Route::get('telegram', [AuthController::class, 'redirect']);
     Route::get('telegram/callback', [AuthController::class, 'callback']);
 });
+
+Route::post('telegram/webhook', [TelegramBotAuthController::class, 'webhook'])
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
