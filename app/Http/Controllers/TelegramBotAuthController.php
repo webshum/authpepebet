@@ -35,7 +35,9 @@ class TelegramBotAuthController extends Controller {
     public function poll(Request $request)
     {
         $token = $request->query('token');
-        $data  = Cache::get(self::CACHE_PREFIX . $token);
+        $cacheKey = self::CACHE_PREFIX . $token;
+        $data = Cache::get(self::CACHE_PREFIX . $token);
+        Log::debug('POLL', ['key' => $cacheKey, 'data' => $data]);
 
         if (!$data) {
             return response()->json(['status' => 'expired']);
@@ -109,6 +111,8 @@ class TelegramBotAuthController extends Controller {
         $token = trim(substr($text, 7));
         $cacheKey = self::CACHE_PREFIX . $token;
         $data = Cache::get($cacheKey);
+
+        Log::debug('WEBHOOK CACHE WRITTEN', ['key' => $cacheKey, 'data' => Cache::get($cacheKey)]);
 
         if (!$data || now()->timestamp > $data['expires_at']) {
             $this->sendMessage($chatId, '❌ Ссылка устарела. Попробуй снова на сайте.');
