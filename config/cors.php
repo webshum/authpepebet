@@ -19,7 +19,11 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://bfb5-176-118-52-184.ngrok-free.app', 'https://8994-176-118-52-184.ngrok-free.app'],
+    'allowed_origins' => [
+        'https://bfb5-176-118-52-184.ngrok-free.app',
+        'https://8994-176-118-52-184.ngrok-free.app',
+        'https://pepebet1.org/'
+    ],
 
     'allowed_origins_patterns' => [],
 
