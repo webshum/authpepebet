@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', \Illuminate\Http\Middleware\HandleCors::class);
 
         $middleware->validateCsrfTokens(except: [
-            'telegram/webhook',
+            'auth/telegram/webhook',
             'auth/telegram/init',
             'auth/telegram/poll',
             'auth/telegram/session'
