@@ -63,7 +63,6 @@ class TelegramBotAuthController extends Controller {
         $tgUser = Cache::get($cacheKey);
 
         if (!$tgUser) {
-            return redirect('https://google.com');
             return redirect(config('services.telegram.redirect'))->with('error', 'Telegram session expired.');
         }
 
@@ -103,7 +102,7 @@ class TelegramBotAuthController extends Controller {
         $chatId = $message['chat']['id'] ?? null;
 
         if (!str_starts_with($text, '/start ')) {
-            $this->sendMessage($chatId, 'Привіт! Натисни кнопку входу на сайті.');
+            $this->sendMessage($chatId, 'Привет! Нажмите кнопку входа на сайте.');
             return response()->json(['ok' => true]);
         }
 
@@ -112,12 +111,12 @@ class TelegramBotAuthController extends Controller {
         $data = Cache::get($cacheKey);
 
         if (!$data || now()->timestamp > $data['expires_at']) {
-            $this->sendMessage($chatId, '❌ Посилання застаріло. Спробуй знову на сайті.');
+            $this->sendMessage($chatId, '❌ Ссылка устарела. Попробуй снова на сайте.');
             return response()->json(['ok' => true]);
         }
 
         if ($data['status'] === 'ready') {
-            $this->sendMessage($chatId, '✅ Ти вже увійшов!');
+            $this->sendMessage($chatId, '✅ Ты уже вошел!');
             return response()->json(['ok' => true]);
         }
 
@@ -129,7 +128,7 @@ class TelegramBotAuthController extends Controller {
         $data['ticket'] = $ticket;
         Cache::put($cacheKey, $data, $data['expires_at'] - now()->timestamp);
 
-        $this->sendMessage($chatId, '✅ Авторизація успішна! Повертайся на сайт.');
+        $this->sendMessage($chatId, '✅ Авторизация успешна! Возвращайся на сайт.');
 
         return response()->json(['ok' => true]);
     }
