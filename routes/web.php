@@ -21,6 +21,5 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('telegram/init',   [TelegramBotAuthController::class, 'init']);
     Route::get('telegram/poll',    [TelegramBotAuthController::class, 'poll']);
     Route::get('telegram/session', [TelegramBotAuthController::class, 'session']);
-    Route::post('telegram/webhook', [TelegramBotAuthController::class, 'webhook'])
-        ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+    Route::post('telegram/webhook', [TelegramBotAuthController::class, 'webhook']);
 });
