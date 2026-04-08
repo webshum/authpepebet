@@ -84,7 +84,7 @@ class TelegramBotAuthController extends Controller {
         $jwt = JWT::encode($jwtData, config('jwt.secret'), 'HS256');
         $handlerUrl = config('services.telegram.redirect');
 
-        return redirect("{$handlerUrl}/auth/telegram/callback?token={$jwt}");
+        return redirect("{$handlerUrl}?token={$jwt}");
     }
 
     public function webhook(Request $request)
