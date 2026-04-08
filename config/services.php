@@ -43,10 +43,10 @@ return [
     ],
 
     'telegram' => [
-        'bot' => env('MY_TELEGRAM_BOT_NAME'),
+        'bot' => env('TELEGRAM_BOT_NAME'),
         'client_id' => null,
-        'client_secret' => env('MY_TELEGRAM_TOKEN'),
-        'redirect' => env('MY_TELEGRAM_REDIRECT_URI'),
+        'client_secret' => env('TELEGRAM_TOKEN'),
+        'redirect' => env('TELEGRAM_REDIRECT_URI'),
     ],
 
     'google' => [
