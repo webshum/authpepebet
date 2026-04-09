@@ -11,9 +11,15 @@ use Illuminate\Support\Str;
 use Firebase\JWT\JWT;
 
 class TelegramBotAuthController extends Controller {
+    private $botToken;
     private const TOKEN_TTL    = 300;
     private const TICKET_TTL   = 60;
     private const CACHE_PREFIX = 'tg_bot_auth:';
+
+    public function __construct()
+    {
+        $this->botToken = config('services.telegram.client_secret');
+    }
 
     public function init(Request $request): JsonResponse
     {
@@ -38,7 +44,6 @@ class TelegramBotAuthController extends Controller {
         $token = $request->query('token');
         $cacheKey = self::CACHE_PREFIX . $token;
         $data = Cache::get(self::CACHE_PREFIX . $token);
-        Log::debug('POLL', ['key' => $cacheKey, 'data' => $data]);
 
         if (!$data) {
             return response()->json(['status' => 'expired']);
@@ -134,9 +139,7 @@ class TelegramBotAuthController extends Controller {
 
     private function sendMessage(int|string $chatId, string $text): void
     {
-        $botToken = config('services.telegram.client_secret');
-
-        Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+        Http::post("https://api.telegram.org/bot{$this->botToken}/sendMessage", [
             'chat_id' => $chatId,
             'text'    => $text,
         ]);
@@ -144,9 +147,7 @@ class TelegramBotAuthController extends Controller {
 
     private function sendMessageWithButtons(int|string $chatId, string $token): void
     {
-        $botToken = config('services.telegram.client_secret');
-
-        Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+        Http::post("https://api.telegram.org/bot{$this->botToken}/sendMessage", [
             'chat_id'      => $chatId,
             'text'         =>
                 "⚠️ *Вход с нового устройства*\n\n" .
@@ -174,9 +175,7 @@ class TelegramBotAuthController extends Controller {
         $cacheKey  = self::CACHE_PREFIX . $token;
         $cacheData = Cache::get($cacheKey);
 
-        $botToken = config('telegram.bot_token');
-
-        Http::post("https://api.telegram.org/bot{$botToken}/editMessageReplyMarkup", [
+        Http::post("https://api.telegram.org/bot{$this->botToken}/editMessageReplyMarkup", [
             'chat_id'      => $chatId,
             'message_id'   => $messageId,
             'reply_markup' => json_encode(['inline_keyboard' => []]),
@@ -184,7 +183,7 @@ class TelegramBotAuthController extends Controller {
 
         if ($action === 'confirm') {
             if (!$cacheData || now()->timestamp > $cacheData['expires_at']) {
-                Http::post("https://api.telegram.org/bot{$botToken}/answerCallbackQuery", [
+                Http::post("https://api.telegram.org/bot{$this->botToken}/answerCallbackQuery", [
                     'callback_query_id' => $callbackId,
                     'text'              => '❌ Ссылка устарела.',
                     'show_alert'        => true,
@@ -201,7 +200,7 @@ class TelegramBotAuthController extends Controller {
             $cacheData['ticket'] = $ticket;
             Cache::put($cacheKey, $cacheData, $cacheData['expires_at'] - now()->timestamp);
 
-            Http::post("https://api.telegram.org/bot{$botToken}/answerCallbackQuery", [
+            Http::post("https://api.telegram.org/bot{$this->botToken}/answerCallbackQuery", [
                 'callback_query_id' => $callbackId,
             ]);
 
@@ -212,7 +211,7 @@ class TelegramBotAuthController extends Controller {
                 Cache::forget($cacheKey);
             }
 
-            Http::post("https://api.telegram.org/bot{$botToken}/answerCallbackQuery", [
+            Http::post("https://api.telegram.org/bot{$this->botToken}/answerCallbackQuery", [
                 'callback_query_id' => $callbackId,
                 'text'              => '❌ Авторизация отменена.',
                 'show_alert'        => true,
