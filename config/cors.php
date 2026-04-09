@@ -20,8 +20,8 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'https://bfb5-176-118-52-184.ngrok-free.app',
-        'https://8994-176-118-52-184.ngrok-free.app',
+        'https://15f3-176-118-52-184.ngrok-free.app',
+        'https://d379-176-118-52-184.ngrok-free.app',
         'https://pepebet1.org',
         'https://authpepe.org'
     ],
