@@ -1,32 +1,36 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    working_dir: /var/www
-    volumes:
-      - ./:/var/www
-      - .env:/var/www/.env
-      - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
-      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
-    networks:
-      - app-network
-    restart: always
+    app:
+        container_name: auth_app
+        build:
+            context: .
+            dockerfile: Dockerfile
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+            - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+            - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+        networks:
+            - app-network
+            - pepebet
+        restart: always
 
-  nginx:
-    image: nginx:stable-alpine
-    ports:
-      - "${NGINX_PORT}:80"
-      - "${NGINX_SSL_PORT}:443"
-    volumes:
-      - ./:/var/www
-      - ./docker/nginx/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - app
-    networks:
-      - app-network
-    restart: always
+    nginx:
+        container_name: auth_nginx
+        image: nginx:stable-alpine
+        ports:
+            - "${NGINX_PORT}:80"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        depends_on:
+            - app
+        networks:
+            - app-network
+            - pepebet
+        restart: always
 
 networks:
-  app-network:
-    driver: bridge
+    app-network:
+        driver: bridge
+    pepebet:
+        external: true
